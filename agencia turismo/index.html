@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Globetrotter Viagens</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --gold: #FFD700;
+            --dark-blue: #003366;
+            --mid-blue: #3073A4;
+            --light-yellow: #FFFF99;
+            --white: #FFFFFF;
+        }
+
+        .modal-animation {
+            animation: modalFade 0.3s ease-out;
+        }
+
+        @keyframes modalFade {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .button-animation {
+            transition: all 0.3s ease;
+        }
+
+        .button-animation:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-shine {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-shine::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .card-shine:hover::before {
+            left: 100%;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+
+        .credit-card-input {
+            background-image: linear-gradient(to right, #3073A4 0%, #003366 100%);
+            color: white;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+            /* Faz com que o main ocupe o espaço restante */
+        }
+
+        footer {
+            margin-top: auto;
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        footer a {
+            position: relative;
+            display: inline-block;
+        }
+
+        footer a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #FFD700;
+            /* Cor ajustada para o padrão do site */
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        footer a:hover::after {
+            transform: scaleX(1);
+        }
+
+
+        :root {
+            --dark-blue: #003366;
+            --mid-blue: #00509E;
+            --light-yellow: #FFD700;
+            --gold: #FFD700;
+            /* Adicionei a cor gold */
+        }
+    </style>
+</head>
+
+<body class="bg-white flex flex-col min-h-screen">
+    <header class="bg-[var(--dark-blue)] text-white p-6 flex flex-col md:flex-row justify-between items-center">
+        <div class="flex items-center space-x-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+                stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16.8 8.5l-4.9-2.5-8.4 4.3 4.9 2.5z"></path>
+                <path d="M11.9 6l-4.9-2.5L3 5l4.9 2.5z"></path>
+                <path d="M16.8 16.5L12 19l-8.4-4.3"></path>
+                <path d="M20.9 12.5L16 15l-4.5-2.3"></path>
+                <path d="M16.8 12.5L20.9 10l-4.3-2.3z"></path>
+            </svg>
+            <h1 class="text-xl md:text-2xl font-bold">Globetrotter Viagens</h1>
+            <div class="md:hidden relative">
+                <button id="menuButton" class="focus:outline-none ml-4 mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                        <path fill-rule="evenodd"
+                            d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div id="mobileMenu"
+                    class="hidden absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg z-10">
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-200">Início</a>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-200">Destinos</a>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-200">Sobre</a>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-200">Contato</a>
+                </div>
+            </div>
+        </div>
+
+        <nav class="mt-4 md:mt-0 flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 hidden md:flex">
+            <a href="#" class="hover:text-[var(--gold)]">Início</a>
+            <a href="#" class="hover:text-[var(--gold)]">Destinos</a>
+            <a href="#" class="hover:text-[var(--gold)]">Sobre</a>
+            <a href="#" class="hover:text-[var(--gold)]">Contato</a>
+            <button id="cartButton" class="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="var(--gold)"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="10" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l1.68 7.59a1 1 0 0 0 .96.82h12.6a1 1 0 0 0 .97-.76L23 6H6"></path>
+                </svg>
+                <span id="cartCount"
+                    class="absolute -top-1 -right-1 bg-red-600 text-white rounded-full px-1 text-xs">0</span>
+            </button>
+        </nav>
+    </header>
+
+    <script>
+      
+    </script>
+
+
+    <section id="home"
+        class="relative bg-[var(--mid-blue)] bg-center bg-no-repeat min-h-screen flex flex-col items-center justify-center fade-in overflow-hidden">
+
+        <div class="container mx-auto px-4 text-center relative z-10 mt-20 md:mt-0">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-[var(--gold)] leading-tight">Descubra o
+                Mundo<br>Com a Globetrotter</h1>
+            <p class="text-xl md:text-2xl mb-12 text-white">Experiências únicas e viagens inesquecíveis à sua espera</p>
+            <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <a href="#destinos"
+                    class="bg-[var(--gold)] text-[var(--dark-blue)] hover:bg-opacity-80 font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110 shadow-lg flex items-center justify-center">
+                    <i class="fas fa-plane mr-2"></i> Explore Nossos Destinos
+                </a>
+            </div>
+        </div>
+
+    </section>
+
+    <main class="container mx-auto p-6">
+        <section class="mb-8">
+            <div class="flex items-center bg-white shadow-md rounded-lg p-4">
+                <input type="text" id="searchInput" placeholder="Busque seu próximo destino..."
+                    class="w-full focus:outline-none">
+            </div>
+        </section>
+
+
+
+
+        <section id="destinations" class="grid md:grid-cols-3 gap-6">
+
+        </section>
+
+        <!-- Modal do Destino -->
+        <div id="destinationModal"
+            class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center backdrop-blur-sm">
+            <div class="bg-white p-8 rounded-lg max-w-md w-full shadow-lg transition-transform transform scale-95 ">
+                <h2 id="modalTitle" class="text-2xl font-bold mb-4 text-[var(--dark-blue)] text-center"></h2>
+                <img id="modalImage" class="w-full h-64 object-cover rounded-lg mb-4 shadow-md" />
+                <p id="modalDescription" class="mb-4 text-gray-700"></p>
+                <div class="flex justify-between mt-4">
+                    <button id="bookButton"
+                        class="w-1/2 mr-1 px-4 py-2 rounded bg-[var(--mid-blue)] text-white hover:bg-[var(--dark-blue)] transition duration-300">
+                        Reservar Agora
+                    </button>
+                    <button id="closeModal"
+                        class="w-1/2 ml-1 px-4 py-2 rounded bg-[var(--light-yellow)] text-[var(--dark-blue)] hover:bg-[var(--mid-blue)] hover:text-white transition duration-300">
+                        Fechar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div id="cartModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+            <div class="bg-white p-8 rounded-lg max-w-md w-full shadow-lg transition-transform transform scale-95 ">
+                <h2 class="text-2xl font-bold mb-4 text-[var(--dark-blue)] text-center">Carrinho de Reservas</h2>
+                <ul id="cartItems" class="mb-4 divide-y divide-gray-200">
+           
+
+                </ul>
+                <button id="payNowButton"
+                    class="w-full mt-4 p-3 rounded font-bold bg-[var(--mid-blue)] text-white hover:bg-[var(--dark-blue)] transition duration-300">
+                    Pagar Agora
+                </button>
+                <div class="flex justify-between mt-4">
+                    <button id="clearCartButton"
+                        class="w-1/2 mr-1 p-3 rounded bg-[var(--light-yellow)] text-[var(--dark-blue)] hover:bg-[var(--mid-blue)] hover:text-white transition duration-300">
+                        Limpar Carrinho
+                    </button>
+                    <button id="closeCartModal"
+                        class="w-1/2 ml-1 p-3 rounded bg-[var(--light-yellow)] text-[var(--dark-blue)] hover:bg-[var(--mid-blue)] hover:text-white transition duration-300">
+                        Fechar
+                    </button>
+                </div>
+            </div>
+        </div>
+     
+        <div id="paymentModal"
+            class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center backdrop-blur-sm">
+            <div
+                class="bg-white p-8 rounded-2xl shadow-2xl max-w-4xl w-full transform transition-all duration-300 ease-in-out">
+           
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
+                            </path>
+                        </svg>
+                        <h2 class="text-2xl font-bold" style="color: var(--dark-blue);">Finalizar Pagamento</h2>
+                    </div>
+                    <button id="closePaymentModal" class="text-gray-500 hover:text-gray-700 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                   
+                    <div class="bg-gradient-to-br from-light-yellow to-white p-6 rounded-xl shadow-md">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center gap-2" style="color: var(--dark-blue);">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                                </path>
+                            </svg>
+                            Suas Reservas
+                        </h3>
+                        <div id="paymentDestinationsContainer"
+                            class="space-y-4 max-h-60 overflow-y-auto custom-scrollbar">
+                  
+                        </div>
+                        <div class="mt-6 pt-4 border-t-2 border-dark-blue/10">
+                            <div class="flex justify-between items-baseline">
+                                <p class="text-base font-medium text-gray-600">Total a pagar</p>
+                                <span id="paymentTotalPrice" class="text-3xl font-bold"
+                                    style="color: var(--dark-blue);">R$ 0</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                            <div class="relative">
+                                <label class="block mb-2 text-sm font-medium" style="color: var(--dark-blue);">Data de
+                                    Check-in</label>
+                                <input type="date" id="startDate" required
+                                    class="w-full p-3 border rounded-lg transition-all focus:ring-2 focus:ring-blue-300 focus:border-blue-500 outline-none"
+                                    style="border-color: var(--mid-blue);">
+                            </div>
+                            <div class="relative">
+                                <label class="block mb-2 text-sm font-medium" style="color: var(--dark-blue);">Data de
+                                    Check-out</label>
+                                <input type="date" id="endDate" required
+                                    class="w-full p-3 border rounded-lg transition-all focus:ring-2 focus:ring-blue-300 focus:border-blue-500 outline-none"
+                                    style="border-color: var(--mid-blue);">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                        <h3 class="text-xl font-semibold mb-6 flex items-center gap-2" style="color: var(--dark-blue);">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
+                                </path>
+                            </svg>
+                            Dados do Pagamento
+                        </h3>
+
+                        <form id="paymentForm" class="space-y-6">
+                            <div class="relative">
+                                <label class="block mb-2 text-sm font-medium" style="color: var(--dark-blue);">Nome no
+                                    Cartão</label>
+                                <input type="text" placeholder="Nome completo" required
+                                    class="w-full p-3 border rounded-lg transition-all focus:ring-2 focus:ring-blue-300 focus:border-blue-500 outline-none"
+                                    style="border-color: var(--mid-blue);">
+                            </div>
+
+                            <div class="relative">
+                                <label class="block mb-2 text-sm font-medium" style="color: var(--dark-blue);">Número do
+                                    Cartão</label>
+                                <div class="relative">
+                                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" required
+                                        class="w-full p-3 pl-3 pr-12 border rounded-lg transition-all focus:ring-2 focus:ring-blue-300 focus:border-blue-500 outline-none"
+                                        style="border-color: var(--mid-blue);" maxlength="19">
+                                    <div id="cardFlag" class="absolute right-3 top-1/2 transform -translate-y-1/2">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="relative">
+                                    <label class="block mb-2 text-sm font-medium"
+                                        style="color: var(--dark-blue);">Validade</label>
+                                    <input type="text" id="expiryDate" placeholder="MM/AA" required
+                                        class="w-full p-3 border rounded-lg transition-all focus:ring-2 focus:ring-blue-300 focus:border-blue-500 outline-none"
+                                        style="border-color: var(--mid-blue);" maxlength="7">
+                                </div>
+                                <div class="relative">
+                                    <label class="block mb-2 text-sm font-medium"
+                                        style="color: var(--dark-blue);">CVV</label>
+                                    <input type="text" id="cvv" placeholder="123" required
+                                        class="w-full p-3 border rounded-lg transition-all focus:ring-2 focus:ring-blue-300 focus:border-blue-500 outline-none"
+                                        style="border-color: var(--mid-blue);" maxlength="3">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <script>
+                        document.getElementById('cardNumber').addEventListener('input', function (e) {
+                            let value = e.target.value.replace(/\D/g, '').match(/.{1,4}/g);
+                            e.target.value = value ? value.join(' ') : '';
+                        });
+
+                        document.getElementById('expiryDate').addEventListener('input', function (e) {
+                            let value = e.target.value.replace(/\D/g, '');
+                            if (value.length > 2) {
+                                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+                            }
+                            e.target.value = value;
+                        });
+
+                        document.getElementById('cvv').addEventListener('input', function (e) {
+                            let value = e.target.value.replace(/\D/g, '');
+                            e.target.value = value;
+                        });
+
+
+                        function identifyCardFlag(number) {
+    number = number.replace(/\D/g, '');
+
+    const cards = {
+        visa: /^4[0-9]{12}(?:[0-9]{3})?$/,
+        mastercard: /^5[1-5][0-9]{14}$|^2(?:2(?:2[1-9]|[3-9][0-9])|[3-6][0-9][0-9]|7(?:[01][0-9]|20))[0-9]{12}$/,
+        amex: /^3[47][0-9]{13}$/,
+        elo: /^4011(78|79)|^43(1274|8935)|^45(1416|7393|763(1|2))|^50(4175|6699|67[0-7][0-9]|9000)|^627780|^63(6297|6368|6369)|^65(0(0(3([1-3]|[5-9])|4([0-9])|5[0-1])|4(0[5-9]|[1-3][0-9]|8[5-9]|9[0-9])|5([0-2][0-9]|3[0-8])|9(0[1-9]|[1-6][0-9]|7[0-8]))|16(5[2-9]|[6-7][0-9])|50(0[0-9]|1[0-9]|2[1-9]|[3-4][0-9]|5[0-8]))/,
+        hipercard: /^(606282\d{10}(\d{3})?)|(3841\d{15})$/,
+        dinersclub: /^3(?:0[0-5]|[68][0-9])[0-9]{11}$/
+    };
+
+    const cardIcons = {
+        visa: `<svg width="40" height="40" viewBox="0 0 40 40">
+            <path d="M14.7,16.8l-2.4,11.1H8.5l2.4-11.1H14.7z M27.5,22.6l1.3-3.5l0.7,3.5H27.5z M29.8,27.9h3.5l-3.1-11.1h-3.2 c-0.7,0-1.3,0.4-1.6,1l-5.5,10.1h4l0.8-2.1h4.7L29.8,27.9z M21.3,23.5c0-3.9-5.4-4.1-5.4-5.9c0-0.5,0.5-1.1,1.6-1.2 c1.4-0.1,2.7,0.3,3.5,0.7l0.6-2.9c-0.9-0.3-2-0.6-3.5-0.6c-3.7,0-6.3,2-6.3,4.8c0,2.1,1.8,3.3,3.2,4c1.4,0.7,1.9,1.2,1.9,1.8 c0,1-1.1,1.4-2.2,1.4c-1.8,0-2.9-0.5-3.7-0.8l-0.7,3c0.8,0.4,2.4,0.7,4,0.7C18.9,28.5,21.3,26.6,21.3,23.5 M40,7.2v25.6 c0,4-3.2,7.2-7.2,7.2H7.2C3.2,40,0,36.8,0,32.8V7.2C0,3.2,3.2,0,7.2,0h25.6C36.8,0,40,3.2,40,7.2" fill="#1434CB"/>
+        </svg>`,
+        
+        mastercard: `<svg width="40" height="40" viewBox="0 0 40 40">
+            <path d="M20,27.5c-2.5,2.1-5.7,3.3-9.2,3.3C4.8,30.8,0,26,0,20s4.8-10.8,10.8-10.8c3.5,0,6.7,1.3,9.2,3.3 c2.5-2.1,5.7-3.3,9.2-3.3C35.2,9.2,40,14,40,20s-4.8,10.8-10.8,10.8C25.7,30.8,22.5,29.5,20,27.5z" fill="#FF5F00"/>
+            <path d="M20,27.5c3.1-2.6,5-6.5,5-10.8s-2-8.2-5-10.8c2.5-2.1,5.7-3.3,9.2-3.3C35.2,2.7,40,7.5,40,13.5 s-4.8,10.8-10.8,10.8C25.7,24.3,22.5,23,20,20.9V27.5z" fill="#EB001B"/>
+            <path d="M20,27.5c-3.1-2.6-5-6.5-5-10.8s2-8.2,5-10.8c-2.5-2.1-5.7-3.3-9.2-3.3C4.8,2.7,0,7.5,0,13.5 s4.8,10.8,10.8,10.8C14.3,24.3,17.5,23,20,20.9V27.5z" fill="#F79E1B"/>
+        </svg>`,
+
+        amex: `<svg width="40" height="40" viewBox="0 0 40 40">
+            <path d="M38.6,3H1.4C0.6,3,0,3.6,0,4.4v31.1C0,36.4,0.6,37,1.4,37h37.1c0.8,0,1.4-0.6,1.4-1.4V4.4 C40,3.6,39.4,3,38.6,3z" fill="#2E77BC"/>
+            <path d="M4.5,20.8l-0.9-2.2l-0.9,2.2H4.5z M37.4,14.9h-2.6v-1h2.8v-1.4h-2.8v-1h2.9V10h-4.7v6.3h4.4V14.9z M31.4,16.3h1.8v-6.3h-1.8V16.3z M28.5,13.5c0,0.4-0.3,0.4-0.4,0.4l-1.6,0v-1.5h1.6C28.3,12.4,28.5,12.5,28.5,13.5 M29.2,11.1 c0,0.4-0.3,0.4-0.4,0.4h-2.3v-1.5h2.3C28.9,10,29.2,10.1,29.2,11.1 M30.9,13.6c0-0.8-0.6-1.2-1-1.3c0.4-0.2,0.7-0.6,0.7-1.1 c0-1.2-1-1.5-2.2-1.5h-4v6.3h4.1C30.1,15.9,30.9,14.9,30.9,13.6 M24.1,14.9h-2.6v-1h2.8v-1.4h-2.8v-1h2.9V10h-4.7v6.3h4.4V14.9z M18.7,10h-1.8v6.3h4.3v-1.4h-2.5V10z M14.7,10l-2.3,2.5L10.1,10H7.8v6.2h1.7v-4.6l2.1,2.3l2.1-2.3v4.6h1.7V10H14.7z M6.9,16.3 h1.9l0.4-1h2.9l0.4,1h1.9l-2.8-6.3H9.7L6.9,16.3z M37.4,23.7h-2.6v-1h2.8v-1.4h-2.8v-1h2.9v-1.4h-4.7v6.3h4.4V23.7z M31.4,25.1h1.8 v-6.3h-1.8V25.1z M28.5,22.3c0,0.4-0.3,0.4-0.4,0.4l-1.6,0v-1.5h1.6C28.3,21.2,28.5,21.3,28.5,22.3 M29.2,19.9 c0,0.4-0.3,0.4-0.4,0.4h-2.3v-1.5h2.3C28.9,18.8,29.2,18.9,29.2,19.9 M30.9,22.4c0-0.8-0.6-1.2-1-1.3c0.4-0.2,0.7-0.6,0.7-1.1 c0-1.2-1-1.5-2.2-1.5h-4v6.3h4.1C30.1,24.7,30.9,23.7,30.9,22.4 M24.1,23.7h-2.6v-1h2.8v-1.4h-2.8v-1h2.9v-1.4h-4.7v6.3h4.4V23.7z M15.8,22.1c0,0.4-0.3,0.4-0.4,0.4l-1.6,0V21h1.6C15.6,21,15.8,21.1,15.8,22.1 M16.5,19.7c0,0.4-0.3,0.4-0.4,0.4h-2.3v-1.5h2.3 C16.2,18.6,16.5,18.7,16.5,19.7 M18.2,22.2c0-0.8-0.6-1.2-1-1.3c0.4-0.2,0.7-0.6,0.7-1.1c0-1.2-1-1.5-2.2-1.5h-4v6.3h4.1 C17.4,24.5,18.2,23.5,18.2,22.2 M6.9,25.1h1.9l0.4-1h2.9l0.4,1h1.9l-2.8-6.3H9.7L6.9,25.1z M4.5,29.6l-0.9-2.2l-0.9,2.2H4.5z" fill="#FFFFFF"/>
+        </svg>`,
+
+        elo: `<svg width="40" height="40" viewBox="0 0 40 40">
+            <path d="M38.6,3H1.4C0.6,3,0,3.6,0,4.4v31.1C0,36.4,0.6,37,1.4,37h37.1c0.8,0,1.4-0.6,1.4-1.4V4.4 C40,3.6,39.4,3,38.6,3z" fill="#00A4E0"/>
+            <path d="M21.3,20c0,2.3-1.9,4.2-4.2,4.2s-4.2-1.9-4.2-4.2s1.9-4.2,4.2-4.2S21.3,17.7,21.3,20 M27.1,20 c0-5.5-4.5-10-10-10s-10,4.5-10,10s4.5,10,10,10S27.1,25.5,27.1,20" fill="#FFFFFF"/>
+        </svg>`,
+
+        hipercard: `<svg width="40" height="40" viewBox="0 0 40 40">
+            <path d="M38.6,3H1.4C0.6,3,0,3.6,0,4.4v31.1C0,36.4,0.6,37,1.4,37h37.1c0.8,0,1.4-0.6,1.4-1.4V4.4 C40,3.6,39.4,3,38.6,3z" fill="#822124"/>
+            <path d="M7.8,15.6h2.9v8.8H7.8V15.6z M24.8,15.6h2.9v8.8h-2.9V15.6z M20.2,15.6h2.9v8.8h-2.9V15.6z M15.6,15.6h2.9v8.8h-2.9V15.6z M11,15.6h2.9v8.8H11V15.6z M29.3,15.6h2.9v8.8h-2.9V15.6z" fill="#FFFFFF"/>
+        </svg>`,
+
+        dinersclub: `<svg width="40" height="40" viewBox="0 0 40 40">
+            <path d="M38.6,3H1.4C0.6,3,0,3.6,0,4.4v31.1C0,36.4,0.6,37,1.4,37h37.1c0.8,0,1.4-0.6,1.4-1.4V4.4 C40,3.6,39.4,3,38.6,3z" fill="#004A98"/>
+            <path d="M16.3,9.5c-4.7,0-8.5,3.8-8.5,8.5c0,4.7,3.8,8.5,8.5,8.5c4.7,0,8.5-3.8,8.5-8.5 C24.8,13.3,21,9.5,16.3,9.5z M16.3,24.1c-3.4,0-6.1-2.7-6.1-6.1c0-3.4,2.7-6.1,6.1-6.1c3.4,0,6.1,2.7,6.1,6.1 C22.4,21.4,19.7,24.1,16.3,24.1z" fill="#FFFFFF"/>
+        </svg>`
+    };
+
+    for (let card in cards) {
+        if (cards[card].test(number)) {
+            return cardIcons[card];
+
+                            return cardIcons[card];
+        }
+    }
+
+    return `<svg width="40" height="40" viewBox="0 0 40 40">
+        <path d="M38.6,3H1.4C0.6,3,0,3.6,0,4.4v31.1C0,36.4,0.6,37,1.4,37h37.1c0.8,0,1.4-0.6,1.4-1.4V4.4 C40,3.6,39.4,3,38.6,3z" fill="#DDDDDD"/>
+        <path d="M20,28.9c-4.9,0-8.9-4-8.9-8.9s4-8.9,8.9-8.9s8.9,4,8.9,8.9S24.9,28.9,20,28.9z M20,13.1c-3.8,0-6.9,3.1-6.9,6.9 s3.1,6.9,6.9,6.9s6.9-3.1,6.9-6.9S23.8,13.1,20,13.1z" fill="#FFFFFF"/>
+    </svg>`;
+}
+
+document.getElementById('cardNumber').addEventListener('input', function (e) {
+    let value = e.target.value.replace(/\D/g, '').match(/.{1,4}/g);
+    e.target.value = value ? value.join(' ') : '';
+
+    const cardFlag = document.getElementById('cardFlag');
+    cardFlag.innerHTML = identifyCardFlag(e.target.value);
+});
+                    </script>
+
+                    <style>
+                        #cardFlag {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            height: 24px;
+                        }
+
+                        #cardFlag svg {
+                            width: 40px;
+                            height: 24px;
+                        }
+                    </style>
+
+                </div>
+
+                <div class="mt-8 flex justify-end gap-4">
+                    <button type="submit" id="confirmPaymentBtn"
+                        class="flex items-center justify-center gap-2 w-[200px] py-3 rounded-lg transition-all transform hover:scale-105"
+                        style="background-color: var(--gold); color: var(--white);">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                        Confirmar Pagamento
+                    </button>
+                    <button id="closePaymentModal" class="px-6 py-3 rounded-lg transition-all hover:opacity-90"
+                        style="background-color: var(--mid-blue); color: var(--white);">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .custom-scrollbar::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 4px;
+            }
+
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: var(--mid-blue);
+                border-radius: 4px;
+            }
+
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                background: var(--dark-blue);
+            }
+        </style>
+
+        <div id="receiptModal"
+            class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+            <div class="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full">
+                <h2 class="text-2xl font-bold mb-6">Confirmação de Reserva</h2>
+
+                <div id="receiptDestinations" class="space-y-4 mb-6">
+                </div>
+
+                <div class="border-t pt-4 mb-6">
+                    <p class="text-xl font-bold">Total: <span id="receiptTotalPrice"></span></p>
+                </div>
+
+                <div class="space-y-2">
+                    <p>Nome: <span id="receiptCardholderName"></span></p>
+                    <p>Cartão: •••• •••• •••• <span id="receiptLastFourDigits"></span></p>
+                    <p>Check-in: <span id="receiptCheckIn"></span></p>
+                    <p>Check-out: <span id="receiptCheckOut"></span></p>
+                    <p>Data da Transação: <span id="receiptTransactionDate"></span></p>
+                </div>
+
+                <div class="mt-6 flex justify-end">
+                    <button id="closeReceiptModal" class="px-4 py-2 bg-blue-500 text-white rounded">
+                        Fechar
+                    </button>
+                    <button id="downloadReceipt" class="ml-2 px-4 py-2 bg-green-500 text-white rounded">
+                        Baixar PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            function processPayment(e) {
+                e.preventDefault();
+
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                const cardholderName = document.querySelector('input[placeholder="Nome completo"]').value;
+                const cardNumber = document.querySelector('input[placeholder="1234 5678 9012 3456"]').value;
+
+                if (!startDate || !endDate) {
+                    createToast('Por favor, preencha as datas de início e fim.', 'error');
+                    return;
+                }
+
+                const receiptDestinations = document.getElementById('receiptDestinations');
+                const receiptTotalPrice = document.getElementById('receiptTotalPrice');
+
+                receiptDestinations.innerHTML = '';
+
+                cart.forEach(item => {
+                    const destinationElement = document.createElement('div');
+                    destinationElement.className = 'flex items-center space-x-4 p-2 bg-white rounded-lg shadow mb-2';
+                    destinationElement.innerHTML = `
+            <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded">
+            <div class="flex-1">
+                <h4 class="font-semibold">${item.name}</h4>
+                <p class="text-gray-600">R$ ${item.price.toLocaleString()}</p>
+            </div>
+        `;
+                    receiptDestinations.appendChild(destinationElement);
+                });
+
+                const total = cart.reduce((sum, item) => sum + item.price, 0);
+                receiptTotalPrice.textContent = `R$ ${total.toLocaleString()}`;
+
+                document.getElementById('receiptCardholderName').textContent = cardholderName;
+                document.getElementById('receiptLastFourDigits').textContent = cardNumber.slice(-4);
+                document.getElementById('receiptCheckIn').textContent = formatDate(startDate);
+                document.getElementById('receiptCheckOut').textContent = formatDate(endDate);
+                document.getElementById('receiptTransactionDate').textContent = formatDate(new Date());
+
+                document.getElementById('paymentModal').classList.add('hidden');
+                document.getElementById('receiptModal').classList.remove('hidden');
+
+                clearCart();
+                createToast(`Pagamento realizado com sucesso para ${cart.length} reservas!`);
+            }
+        </script>
+
+    </main>
+
+    <footer class="w-full bg-gradient-to-r from-[#003366] to-[#3073A4] text-white py-8 border-t-2 border-[#FFD700]">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="text-center md:text-left space-y-2">
+                    <div class="flex items-center justify-center md:justify-start gap-2">
+                        <span class="text-[#FFD700] font-bold text-lg">Matheus Felix</span>
+                        <span class="text-gray-400">|</span>
+                        <span class="text-sm text-gray-300">Desenvolvedor Front-end</span>
+                    </div>
+                    <p class="text-sm text-gray-400">
+                        &copy; 2024 Globetrotter Viagens
+                        <span class="block md:inline">Todos os direitos reservados.</span>
+                    </p>
+                </div>
+
+                <div class="flex flex-col items-center md:items-end gap-4">
+                    <div class="flex items-center gap-6">
+                        <a href="https://github.com/mthfl" target="_blank"
+                            class="text-[#FFD700] hover:text-[#FFFF99] transition-colors duration-300">
+                            <i class="fab fa-github text-2xl"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/matheus-felix-74489329a/" target="_blank"
+                            class="text-[#FFD700] hover:text-[#FFFF99] transition-colors duration-300">
+                            <i class="fab fa-linkedin text-2xl"></i>
+                        </a>
+                        <a href="https://www.instagram.com/mth_fl" target="_blank"
+                            class="text-[#FFD700] hover:text-[#FFFF99] transition-colors duration-300">
+                            <i class="fab fa-instagram text-2xl"></i>
+                        </a>
+                    </div>
+                    <div class="text-xs text-gray-400 text-center md:text-right">
+                        <p>Desenvolvido por Matheus Felix</p>
+                        <a href="mailto:matheus.dev91@gmail.com"
+                            class="text-[#FFD700] hover:text-[#FFFF99] transition-colors duration-300">
+                            matheus.dev91@gmail.com
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./main.js"></script>
+</body>
+
+</html>
