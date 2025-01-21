@@ -127,6 +127,29 @@
             transform: scaleX(1);
         }
 
+           /* Animações personalizadas */
+           @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .nav-link::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
 
         :root {
             --dark-blue: #003366;
@@ -139,74 +162,437 @@
 </head>
 
 <body class="bg-white flex flex-col min-h-screen">
-    <header class="bg-[var(--dark-blue)] text-white p-6 flex flex-col md:flex-row justify-between items-center">
-        <div class="flex items-center space-x-4">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
-                stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16.8 8.5l-4.9-2.5-8.4 4.3 4.9 2.5z"></path>
-                <path d="M11.9 6l-4.9-2.5L3 5l4.9 2.5z"></path>
-                <path d="M16.8 16.5L12 19l-8.4-4.3"></path>
-                <path d="M20.9 12.5L16 15l-4.5-2.3"></path>
-                <path d="M16.8 12.5L20.9 10l-4.3-2.3z"></path>
-            </svg>
-            <h1 class="text-xl md:text-2xl font-bold">Globetrotter Viagens</h1>
-            <div class="md:hidden relative">
-                <button id="menuButton" class="focus:outline-none ml-4 mt-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                        <path fill-rule="evenodd"
-                            d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z"
-                            clip-rule="evenodd" />
+    <header class="bg-[var(--dark-blue)] text-white p-6 sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo e Nome da Empresa -->
+            <div class="flex items-center space-x-4 group cursor-pointer">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" 
+                    class="transition-transform duration-300 group-hover:scale-110">
+                    <path d="M16.8 8.5l-4.9-2.5-8.4 4.3 4.9 2.5z" stroke="var(--gold)" stroke-width="2" 
+                        stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M11.9 6l-4.9-2.5L3 5l4.9 2.5z" stroke="var(--gold)" stroke-width="2" 
+                        stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M16.8 16.5L12 19l-8.4-4.3" stroke="var(--gold)" stroke-width="2" 
+                        stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M20.9 12.5L16 15l-4.5-2.3" stroke="var(--gold)" stroke-width="2" 
+                        stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M16.8 12.5L20.9 10l-4.3-2.3z" stroke="var(--gold)" stroke-width="2" 
+                        stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+                <h1 class="text-xl md:text-2xl font-bold tracking-wide transition-colors duration-300 
+                    hover:text-[var(--gold)]">
+                    Globetrotter Viagens
+                </h1>
+            </div>
+
+            <!-- Menu Desktop -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <ul class="flex space-x-8">
+                    <li>
+                        <a href="#home" class="nav-link hover:text-[var(--gold)] transition-colors duration-300">
+                            Início
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#destinations" class="nav-link hover:text-[var(--gold)] transition-colors duration-300">
+                            Destinos
+                        </a>
+                    </li>
+                   
+                    <li>
+                        <a href="#footer" class="nav-link hover:text-[var(--gold)] transition-colors duration-300">
+                            Contato
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Carrinho -->
+                <button id="cartButton" class="relative group p-2 hover:bg-[var(--mid-blue)] rounded-full 
+                    transition-colors duration-300" aria-label="Carrinho de Compras">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" 
+                        stroke="var(--gold)" stroke-width="2" stroke-linecap="round" 
+                        stroke-linejoin="round" class="transition-transform group-hover:scale-110">
+                        <circle cx="10" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l1.68 7.59a1 1 0 0 0 .96.82h12.6a1 1 0 0 0 .97-.76L23 6H6"></path>
                     </svg>
+                    <span id="cartCount" class="absolute -top-1 -right-1 bg-red-600 text-white 
+                        rounded-full px-2 py-0.5 text-xs min-w-[20px] text-center animate-fadeIn">
+                        0
+                    </span>
                 </button>
-                <div id="mobileMenu"
-                    class="hidden absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg z-10">
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-200">Início</a>
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-200">Destinos</a>
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-200">Sobre</a>
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-200">Contato</a>
+            </nav>
+
+            <!-- Botão Menu Mobile -->
+            <button id="menuButton" class="md:hidden p-2 hover:bg-[var(--mid-blue)] rounded-lg 
+                transition-colors duration-300" aria-label="Menu">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" 
+                    class="w-6 h-6">
+                    <path fill-rule="evenodd" d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 
+                        0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 
+                        12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" 
+                        clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Sidebar Mobile -->
+    <aside id="sidebar" class="fixed inset-0 bg-black/50 hidden md:hidden z-50 transition-all duration-300">
+        <div class="bg-white w-80 h-full transform transition-transform duration-300 translate-x-0 shadow-xl">
+            <!-- Header do Sidebar -->
+            <div class="bg-[var(--dark-blue)] p-6">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-3">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" 
+                        class="transition-transform duration-300 group-hover:scale-110">
+                        <path d="M16.8 8.5l-4.9-2.5-8.4 4.3 4.9 2.5z" stroke="var(--gold)" stroke-width="2" 
+                            stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <path d="M11.9 6l-4.9-2.5L3 5l4.9 2.5z" stroke="var(--gold)" stroke-width="2" 
+                            stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <path d="M16.8 16.5L12 19l-8.4-4.3" stroke="var(--gold)" stroke-width="2" 
+                            stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <path d="M20.9 12.5L16 15l-4.5-2.3" stroke="var(--gold)" stroke-width="2" 
+                            stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <path d="M16.8 12.5L20.9 10l-4.3-2.3z" stroke="var(--gold)" stroke-width="2" 
+                            stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </svg>
+                        <h2 class="text-xl font-bold text-white">Globetrotter</h2>
+                    </div>
+                    <button id="closeSidebar" 
+                        class="p-2 hover:bg-white/10 rounded-full transition-colors" 
+                        aria-label="Fechar menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" 
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+    
+            <!-- Conteúdo do Sidebar -->
+            <div class="p-6">
+                <nav>
+                    <ul class="space-y-2">
+                        <!-- Início -->
+                        <li>
+                            <a href="#home" class="flex items-center space-x-3 p-4 rounded-xl hover:bg-[var(--dark-blue)]/5 
+                                group transition-all duration-300">
+                                <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center 
+                                    rounded-lg bg-[var(--dark-blue)]/10 group-hover:bg-[var(--dark-blue)]/20 
+                                    transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--dark-blue)]" 
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-gray-700 group-hover:text-[var(--dark-blue)]">
+                                        Início
+                                    </span>
+                                </div>
+                            </a>
+                        </li>
+    
+                        <!-- Destinos -->
+                        <li>
+                            <a href="#destinations" class="flex items-center space-x-3 p-4 rounded-xl hover:bg-[var(--dark-blue)]/5 
+                                group transition-all duration-300">
+                                <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center 
+                                    rounded-lg bg-[var(--dark-blue)]/10 group-hover:bg-[var(--dark-blue)]/20 
+                                    transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--dark-blue)]" 
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-gray-700 group-hover:text-[var(--dark-blue)]">
+                                        Destinos
+                                    </span>
+                                </div>
+                            </a>
+                        </li>
+    
+                        
+                   
+    
+                        <!-- Contato -->
+                        <li>
+                            <a href="#footer" class="flex items-center space-x-3 p-4 rounded-xl hover:bg-[var(--dark-blue)]/5 
+                                group transition-all duration-300">
+                                <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center 
+                                    rounded-lg bg-[var(--dark-blue)]/10 group-hover:bg-[var(--dark-blue)]/20 
+                                    transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--dark-blue)]" 
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-gray-700 group-hover:text-[var(--dark-blue)]">
+                                        Contato
+                                    </span>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+    
+                <!-- Footer do Sidebar -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <a href="#destinations" class="flex items-center space-x-3 p-4 rounded-xl bg-[var(--dark-blue)] 
+                        hover:bg-[var(--mid-blue)] transition-colors group">
+                        <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg 
+                            bg-white/10">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" 
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="font-medium text-white">Agendar Viagem</span>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
+    </aside>
 
-        <nav class="mt-4 md:mt-0 flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 hidden md:flex">
-            <a href="#" class="hover:text-[var(--gold)]">Início</a>
-            <a href="#" class="hover:text-[var(--gold)]">Destinos</a>
-            <a href="#" class="hover:text-[var(--gold)]">Sobre</a>
-            <a href="#" class="hover:text-[var(--gold)]">Contato</a>
-            <button id="cartButton" class="relative">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="var(--gold)"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="10" cy="21" r="1"></circle>
-                    <circle cx="20" cy="21" r="1"></circle>
-                    <path d="M1 1h4l1.68 7.59a1 1 0 0 0 .96.82h12.6a1 1 0 0 0 .97-.76L23 6H6"></path>
-                </svg>
-                <span id="cartCount"
-                    class="absolute -top-1 -right-1 bg-red-600 text-white rounded-full px-1 text-xs">0</span>
-            </button>
-        </nav>
-    </header>
+    <script>
+       // Funcionalidade do Menu Mobile
+const sidebar = document.getElementById('sidebar');
+const menuButton = document.getElementById('menuButton');
+const closeSidebar = document.getElementById('closeSidebar');
+const menuLinks = sidebar.querySelectorAll('a'); // Seleciona todos os links do sidebar
+
+function toggleSidebar() {
+    sidebar.classList.toggle('hidden');
+    document.body.classList.toggle('overflow-hidden');
+}
+
+function closeSidebarWithDelay() {
+    // Adiciona uma classe para animação de saída
+    sidebar.classList.add('animate-fade-out');
+    
+    // Aguarda a animação terminar antes de esconder o sidebar
+    setTimeout(() => {
+        toggleSidebar();
+        sidebar.classList.remove('animate-fade-out');
+    }, 300); // 300ms = duração da animação
+}
+
+// Event Listeners
+menuButton.addEventListener('click', toggleSidebar);
+closeSidebar.addEventListener('click', closeSidebarWithDelay);
+
+// Fecha o sidebar ao clicar fora dele
+sidebar.addEventListener('click', (e) => {
+    if (e.target === sidebar) {
+        closeSidebarWithDelay();
+    }
+});
+
+// Fecha o sidebar ao clicar em qualquer link
+menuLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        // Previne o comportamento padrão se o link for apenas "#"
+        if (link.getAttribute('href') === '#') {
+            e.preventDefault();
+        }
+        closeSidebarWithDelay();
+    });
+});
+
+// Fecha o sidebar ao pressionar a tecla ESC
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !sidebar.classList.contains('hidden')) {
+        closeSidebarWithDelay();
+    }
+});
+
+// Adicione este CSS no seu arquivo de estilos ou na tag <style>
+const styles = `
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+
+    .animate-fade-out {
+        animation: fadeOut 0.3s ease-out forwards;
+    }
+
+    /* Animação para o conteúdo do sidebar */
+    .sidebar-content {
+        transition: transform 0.3s ease-out;
+    }
+
+    .hidden .sidebar-content {
+        transform: translateX(-100%);
+    }
+`;
+
+// Adiciona os estilos dinamicamente
+const styleSheet = document.createElement("style");
+styleSheet.textContent = styles;
+document.head.appendChild(styleSheet);
+
+       
+    </script>
+    
 
     <script>
       
     </script>
 
 
-    <section id="home"
-        class="relative bg-[var(--mid-blue)] bg-center bg-no-repeat min-h-screen flex flex-col items-center justify-center fade-in overflow-hidden">
+<section id="home" class="relative min-h-screen overflow-hidden">
+    
+    <div class="absolute inset-0 bg-[var(--mid-blue)]">
+      
+        <div class="absolute inset-0 opacity-10 bg-pattern"></div>
+    
+        <div class="absolute inset-0 bg-gradient-to-b from-[var(--dark-blue)]/80 to-[var(--mid-blue)]/90"></div>
+    </div>
 
-        <div class="container mx-auto px-4 text-center relative z-10 mt-20 md:mt-0">
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-[var(--gold)] leading-tight">Descubra o
-                Mundo<br>Com a Globetrotter</h1>
-            <p class="text-xl md:text-2xl mb-12 text-white">Experiências únicas e viagens inesquecíveis à sua espera</p>
-            <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <a href="#destinos"
-                    class="bg-[var(--gold)] text-[var(--dark-blue)] hover:bg-opacity-80 font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110 shadow-lg flex items-center justify-center">
-                    <i class="fas fa-plane mr-2"></i> Explore Nossos Destinos
+ 
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="floating-elements">
+           
+            <div class="absolute h-20 w-20 rounded-full bg-[var(--gold)]/10 top-1/4 left-1/4 animate-float-slow"></div>
+            <div class="absolute h-32 w-32 rounded-full bg-[var(--gold)]/5 top-1/3 right-1/4 animate-float-medium"></div>
+            <div class="absolute h-16 w-16 rounded-full bg-[var(--gold)]/10 bottom-1/4 left-1/3 animate-float-fast"></div>
+        </div>
+    </div>
+
+  
+    <div class="relative z-10 container mx-auto px-4 h-screen flex flex-col items-center justify-center">
+ 
+     
+
+     
+        <div class="text-center max-w-4xl mx-auto space-y-6">
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight
+                animate-fade-in-up">
+                Descubra o Mundo
+                <span class="block text-[var(--gold)] mt-2">Com a Globetrotter</span>
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-white/90 font-light max-w-2xl mx-auto leading-relaxed
+                animate-fade-in-up animation-delay-200">
+                Experiências únicas e viagens inesquecíveis à sua espera
+            </p>
+
+        
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mt-12
+                animate-fade-in-up animation-delay-400">
+                <a href="#destinations" 
+                    class="group relative overflow-hidden rounded-full bg-[var(--gold)] px-8 py-4 
+                    transition-transform hover:scale-105 active:scale-95">
+                    <div class="absolute inset-0 bg-white/20 translate-y-full transition-transform
+                        group-hover:translate-y-0"></div>
+                    <span class="relative flex items-center justify-center text-[var(--dark-blue)] font-bold">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" 
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                        Explore Nossos Destinos
+                    </span>
+                </a>
+
+                <a href="#contato" 
+                    class="group relative overflow-hidden rounded-full border-2 border-white px-8 py-4
+                    transition-transform hover:scale-105 active:scale-95">
+                    <div class="absolute inset-0 bg-white/10 translate-y-full transition-transform
+                        group-hover:translate-y-0"></div>
+                    <span class="relative text-white font-bold">
+                        Fale Conosco
+                    </span>
                 </a>
             </div>
         </div>
 
-    </section>
+       
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white/70" fill="none" 
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Animações personalizadas */
+    @keyframes float-slow {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    @keyframes float-medium {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+    @keyframes float-fast {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    @keyframes pulse-slow {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    .animate-float-slow {
+        animation: float-slow 6s ease-in-out infinite;
+    }
+
+    .animate-float-medium {
+        animation: float-medium 4s ease-in-out infinite;
+    }
+
+    .animate-float-fast {
+        animation: float-fast 3s ease-in-out infinite;
+    }
+
+    .animate-pulse-slow {
+        animation: pulse-slow 3s ease-in-out infinite;
+    }
+
+    .animate-fade-in-up {
+        animation: fadeInUp 0.8s ease-out forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animation-delay-200 {
+        animation-delay: 0.2s;
+    }
+
+    .animation-delay-400 {
+        animation-delay: 0.4s;
+    }
+
+   
+</style>
 
     <main class="container mx-auto p-6">
         <section class="mb-8">
@@ -576,7 +962,7 @@
 
     </main>
 
-    <footer class="w-full bg-gradient-to-r from-[#003366] to-[#3073A4] text-white py-8 border-t-2 border-[#FFD700]">
+    <footer id="footer" class="w-full bg-gradient-to-r from-[#003366] to-[#3073A4] text-white py-8 border-t-2 border-[#FFD700]">
         <div class="max-w-6xl mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-center gap-6">
                 <div class="text-center md:text-left space-y-2">
